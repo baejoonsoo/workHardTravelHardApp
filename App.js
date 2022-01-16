@@ -23,7 +23,10 @@ export default function App() {
     if (text === "") {
       return;
     }
-    const newToDos = { ...toDos, [count.current++]: { text, work: working } };
+    const newToDos = {
+      ...toDos,
+      [count.current++]: { text, working: working },
+    };
     setToDos(newToDos);
     setText("");
   };
@@ -58,11 +61,13 @@ export default function App() {
         style={styles.input}
       />
       <ScrollView>
-        {Object.keys(toDos).map((key) => (
-          <View key={key} style={styles.toDo}>
-            <Text style={styles.toDoText}>{toDos[key].text}</Text>
-          </View>
-        ))}
+        {Object.keys(toDos).map((key) =>
+          toDos[key].working === working ? (
+            <View key={key} style={styles.toDo}>
+              <Text style={styles.toDoText}>{toDos[key].text}</Text>
+            </View>
+          ) : null
+        )}
       </ScrollView>
     </View>
   );
