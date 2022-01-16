@@ -1,36 +1,69 @@
 import { StatusBar } from "expo-status-bar";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   TextInput,
+  Alert,
   ScrollView,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const STORAGE_KEY = "@toDos";
 
 export default function App() {
   const [text, setText] = useState("");
   const [toDos, setToDos] = useState({});
   const [working, setWorking] = useState(true);
+
+  useEffect(() => {
+    loadToDos();
+  }, []);
+
   const onTravel = () => setWorking(false);
   const onWork = () => setWorking(true);
-  const count = useRef(0);
 
   const onChangeText = (payload) => setText(payload);
 
-  const addToDo = () => {
+  const saveToDos = async (toSave) => {
+    try {
+      const toDosData = JSON.stringify(toSave);
+      await AsyncStorage.setItem(STORAGE_KEY, toDosData);
+    } catch {
+      Alert.alert("목록 저장에 실패하였습니다", "", [
+        {
+          text: "확인",
+        },
+        {
+          text: "다시 시도",
+          onPress: () => saveToDos(toSave),
+        },
+      ]);
+    }
+  };
+
+  const loadToDos = async () => {
+    try {
+      const ToDosStr = await AsyncStorage.getItem(STORAGE_KEY);
+      const ToDosJSON = JSON.parse(ToDosStr);
+      setToDos(ToDosJSON);
+    } catch {}
+  };
+
+  const addToDo = async () => {
     if (text === "") {
       return;
     }
     const newToDos = {
       ...toDos,
-      [count.current++]: { text, working: working },
+      [Date.now()]: { text, working: working },
     };
     setToDos(newToDos);
+    await saveToDos(newToDos);
     setText("");
   };
-  console.log(toDos);
 
   return (
     <View style={styles.container}>
