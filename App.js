@@ -10,6 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Fontisto } from "@expo/vector-icons";
 
 const STORAGE_KEY = "@toDos";
 
@@ -34,10 +35,10 @@ export default function App() {
     } catch {
       Alert.alert("목록 저장에 실패하였습니다", "", [
         {
-          text: "확인",
+          text: "Cancel",
         },
         {
-          text: "다시 시도",
+          text: "Again",
           onPress: () => saveToDos(toSave),
         },
       ]);
@@ -49,7 +50,17 @@ export default function App() {
       const ToDosStr = await AsyncStorage.getItem(STORAGE_KEY);
       const ToDosJSON = JSON.parse(ToDosStr);
       setToDos(ToDosJSON);
-    } catch {}
+    } catch {
+      Alert.alert("목록 저장에 실패하였습니다", "", [
+        {
+          text: "Cancel",
+        },
+        {
+          text: "Again",
+          onPress: () => saveToDos(toSave),
+        },
+      ]);
+    }
   };
 
   const addToDo = async () => {
@@ -63,6 +74,25 @@ export default function App() {
     setToDos(newToDos);
     await saveToDos(newToDos);
     setText("");
+  };
+
+  const deleteToDo = (key) => {
+    Alert.alert("정말로 삭제하시겠습니까?", "이 행동은 되돌릴 수 없습니다", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "I'm Sure",
+        style: "destructive",
+        onPress: () => {
+          const newToDos = { ...toDos };
+          delete newToDos[key];
+          setToDos(newToDos);
+          saveToDos(newToDos);
+        },
+      },
+    ]);
   };
 
   return (
@@ -98,6 +128,9 @@ export default function App() {
           toDos[key].working === working ? (
             <View key={key} style={styles.toDo}>
               <Text style={styles.toDoText}>{toDos[key].text}</Text>
+              <TouchableOpacity onPress={() => deleteToDo(key)}>
+                <Fontisto name="trash" size={18} color="white"></Fontisto>
+              </TouchableOpacity>
             </View>
           ) : null
         )}
@@ -135,6 +168,9 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 20,
     borderRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   toDoText: {
     color: "white",
