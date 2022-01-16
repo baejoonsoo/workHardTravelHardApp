@@ -1,21 +1,33 @@
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   TextInput,
+  ScrollView,
 } from "react-native";
-import { getFontScale } from "react-native/Libraries/Utilities/PixelRatio";
 
 export default function App() {
   const [text, setText] = useState("");
+  const [toDos, setToDos] = useState({});
   const [working, setWorking] = useState(true);
   const onTravel = () => setWorking(false);
   const onWork = () => setWorking(true);
+  const count = useRef(0);
 
   const onChangeText = (payload) => setText(payload);
+
+  const addToDo = () => {
+    if (text === "") {
+      return;
+    }
+    const newToDos = { ...toDos, [count.current++]: { text, work: working } };
+    setToDos(newToDos);
+    setText("");
+  };
+  console.log(toDos);
 
   return (
     <View style={styles.container}>
@@ -37,12 +49,21 @@ export default function App() {
         </TouchableOpacity>
       </View>
       <TextInput
+        returnKeyType="done"
+        onSubmitEditing={addToDo}
         value={text}
         autoCapitalize="none"
         onChangeText={onChangeText}
         placeholder={working ? "Add a To Do" : "Where do you want to go?"}
         style={styles.input}
       />
+      <ScrollView>
+        {Object.keys(toDos).map((key) => (
+          <View key={key} style={styles.toDo}>
+            <Text style={styles.toDoText}>{toDos[key].text}</Text>
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 }
@@ -67,7 +88,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderRadius: 30,
-    marginTop: 20,
+    marginVertical: 20,
     fontSize: 18,
+  },
+  toDo: {
+    backgroundColor: "#5C5C60",
+    marginBottom: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+  },
+  toDoText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "500",
   },
 });
