@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   toDo: {
-    backgroundColor: "#5C5C60",
+    backgroundColor: "#3a3d40",
     marginBottom: 10,
     paddingVertical: 20,
     paddingHorizontal: 20,
