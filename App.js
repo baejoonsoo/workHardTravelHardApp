@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Fontisto } from "@expo/vector-icons";
+import ToDos from "./toDo";
 
 const STORAGE_KEY = "@toDos";
 const WORK_STATE = "@workState";
@@ -85,30 +85,11 @@ export default function App() {
     }
     const newToDos = {
       ...toDos,
-      [Date.now()]: { text, working: working },
+      [Date.now()]: { text, working: working, checked: false },
     };
     setToDos(newToDos);
     await saveToDos(newToDos);
     setText("");
-  };
-
-  const deleteToDo = (key) => {
-    Alert.alert("정말로 삭제하시겠습니까?", "이 행동은 되돌릴 수 없습니다", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "I'm Sure",
-        style: "destructive",
-        onPress: () => {
-          const newToDos = { ...toDos };
-          delete newToDos[key];
-          setToDos(newToDos);
-          saveToDos(newToDos);
-        },
-      },
-    ]);
   };
 
   return (
@@ -142,12 +123,13 @@ export default function App() {
       <ScrollView>
         {Object.keys(toDos).map((key) =>
           toDos[key].working === working ? (
-            <View key={key} style={styles.toDo}>
-              <Text style={styles.toDoText}>{toDos[key].text}</Text>
-              <TouchableOpacity onPress={() => deleteToDo(key)}>
-                <Fontisto name="trash" size={18} color="white"></Fontisto>
-              </TouchableOpacity>
-            </View>
+            <ToDos
+              key={key}
+              k={key}
+              toDos={toDos}
+              saveToDos={saveToDos}
+              setToDos={setToDos}
+            />
           ) : null
         )}
       </ScrollView>
@@ -177,20 +159,5 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     marginVertical: 20,
     fontSize: 18,
-  },
-  toDo: {
-    backgroundColor: "#3a3d40",
-    marginBottom: 10,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    borderRadius: 15,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  toDoText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "500",
   },
 });
