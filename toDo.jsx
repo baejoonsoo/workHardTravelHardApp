@@ -37,7 +37,6 @@ const ToDos = ({ toDos, saveToDos, setToDos, k }) => {
   };
 
   const onCheck = () => {
-    console.log("click");
     const clickedToDo = toDos[k];
     const newToDo = {
       ...toDos,
