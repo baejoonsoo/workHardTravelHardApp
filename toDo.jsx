@@ -5,11 +5,13 @@ import {
   View,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
 } from "react-native";
 import {
   Fontisto,
   MaterialCommunityIcons,
   FontAwesome,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import { useState } from "react";
 
@@ -76,66 +78,91 @@ const ToDos = ({ toDos, saveToDos, setToDos, k }) => {
 
   return (
     <View style={styles.toDo}>
-      <View style={styles.toDoBox}>
-        {toDos[k].checked ? (
-          <MaterialCommunityIcons
-            onPress={onCheck}
-            name="checkbox-marked"
-            size={24}
-            color="white"
-          />
-        ) : (
-          <MaterialCommunityIcons
-            onPress={onCheck}
-            name="checkbox-blank-outline"
-            size={24}
-            color="white"
-          />
-        )}
-        {patching ? (
-          <TextInput
-            style={styles.textPatch}
-            value={text}
-            onSubmitEditing={onPatching}
-            autoCapitalize="none"
-            returnKeyType="done"
-            onChangeText={changeToDoText}
-          />
-        ) : (
-          <Text
+      {patching ? (
+        <View style={{ flexDirection: "row" }}>
+          <TouchableWithoutFeedback onPress={onCheck}>
+            <View style={styles.toDoBox}>
+              <TextInput
+                style={styles.textPatch}
+                value={text}
+                onSubmitEditing={onPatching}
+                autoCapitalize="none"
+                returnKeyType="done"
+                onChangeText={changeToDoText}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+          <View
             style={{
-              ...styles.toDoText,
-              color: toDos[k].checked ? "grey" : "white",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              flex: 1,
+              paddingRight: 10,
             }}
           >
-            {toDos[k].text}
-          </Text>
-        )}
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          flex: 1,
-        }}
-      >
-        <TouchableOpacity style={{ marginRight: 10 }} onPress={modeChange}>
-          <FontAwesome name="pencil" size={20} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => deleteToDo(k)}>
-          <Fontisto name="trash" size={18} color="white"></Fontisto>
-        </TouchableOpacity>
-      </View>
+            <MaterialIcons
+              name="cancel"
+              size={24}
+              color="white"
+              onPress={modeChange}
+            />
+          </View>
+        </View>
+      ) : (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableWithoutFeedback onPress={onCheck}>
+            <View style={styles.toDoBox}>
+              {toDos[k].checked ? (
+                <MaterialCommunityIcons
+                  name="checkbox-marked"
+                  size={24}
+                  color="white"
+                />
+              ) : (
+                <MaterialCommunityIcons
+                  name="checkbox-blank-outline"
+                  size={24}
+                  color="white"
+                />
+              )}
+              <Text
+                style={{
+                  ...styles.toDoText,
+                  color: toDos[k].checked ? "grey" : "white",
+                }}
+              >
+                {toDos[k].text}
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              marginRight: 10,
+              flex: 1,
+            }}
+          >
+            <TouchableOpacity style={{ paddingRight: 10 }} onPress={modeChange}>
+              <FontAwesome name="pencil" size={20} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => deleteToDo(k)}>
+              <Fontisto name="trash" size={18} color="white"></Fontisto>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   toDo: {
-    backgroundColor: "#3a3d40",
+    //3a3d40
+    backgroundColor: "#1b1b1b",
     marginBottom: 10,
     paddingVertical: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     borderRadius: 15,
     flexDirection: "row",
     alignItems: "center",
@@ -145,25 +172,30 @@ const styles = StyleSheet.create({
   toDoBox: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 5,
+    flex: 10,
   },
   textPatch: {
     borderBottomColor: "#f4f4f4",
     borderBottomWidth: 1,
-    marginLeft: 10,
     borderRadius: 10,
     paddingLeft: 10,
+    paddingRight: 10,
     fontSize: 16,
     color: "#f4f4f4",
     paddingBottom: 3,
-    flex: 0.95,
+    marginRight: 5,
+    flex: 1,
   },
   toDoText: {
     paddingLeft: 10,
     fontSize: 16,
     fontWeight: "500",
     overflow: "hidden",
-    flex: 0.98,
+    flex: 1,
+    paddingRight: 10,
+    paddingLeft: 10,
+    marginRight: 15,
+    fontSize: 16,
   },
 });
 
