@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Fontisto } from "@expo/vector-icons";
 
 const STORAGE_KEY = "@toDos";
+const WORK_STATE = "@workState";
 
 export default function App() {
   const [text, setText] = useState("");
@@ -21,12 +22,27 @@ export default function App() {
 
   useEffect(() => {
     loadToDos();
+    loadWorkState();
   }, []);
 
-  const onTravel = () => setWorking(false);
-  const onWork = () => setWorking(true);
+  const onTravel = async () => {
+    setWorking(false);
+    await AsyncStorage.setItem(WORK_STATE, JSON.stringify(false));
+  };
+  const onWork = async () => {
+    setWorking(true);
+    await AsyncStorage.setItem(WORK_STATE, JSON.stringify(true));
+  };
 
   const onChangeText = (payload) => setText(payload);
+
+  const loadWorkState = async () => {
+    try {
+      const workState = await AsyncStorage.getItem(WORK_STATE);
+      const workStateBoolen = workState === "true";
+      setWorking(workStateBoolen);
+    } catch {}
+  };
 
   const saveToDos = async (toSave) => {
     try {
