@@ -10,6 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AntDesign } from "@expo/vector-icons";
 import ToDos from "./toDo";
 
 const STORAGE_KEY = "@toDos";
@@ -92,6 +93,8 @@ export default function App() {
     setText("");
   };
 
+  const onReset = () => setText("");
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -111,15 +114,20 @@ export default function App() {
           </Text>
         </TouchableOpacity>
       </View>
-      <TextInput
-        returnKeyType="done"
-        onSubmitEditing={addToDo}
-        value={text}
-        autoCapitalize="none"
-        onChangeText={onChangeText}
-        placeholder={working ? "Add a To Do" : "Where do you want to go?"}
-        style={styles.input}
-      />
+      <View>
+        <TextInput
+          returnKeyType="done"
+          onSubmitEditing={addToDo}
+          value={text}
+          autoCapitalize="none"
+          onChangeText={onChangeText}
+          placeholder={working ? "Add a To Do" : "Where do you want to go?"}
+          style={styles.input}
+        />
+        <TouchableOpacity style={styles.resetBtn} onPress={onReset}>
+          <AntDesign name="closecircleo" size={24} color="#1b1b1b" />
+        </TouchableOpacity>
+      </View>
       <ScrollView>
         {Object.keys(toDos).map((key) =>
           toDos[key].working === working ? (
@@ -160,4 +168,5 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     fontSize: 18,
   },
+  resetBtn: { position: "absolute", right: 15, top: 35 },
 });
